@@ -1,12 +1,12 @@
-name: Build C++ Program
+name: BuildingTarball
 
 on:
   push:
     branches:
-      - branchMake
+      - branchAutomake
   pull_request:
     branches:
-      - branchMake
+      - branchAutomake
 
 jobs:
   build:
@@ -14,6 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build with Makefile
+    - name: Build with Automake
       run: |
+        ./configure
         make
+        make dist
