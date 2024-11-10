@@ -1,0 +1,7 @@
+Package: arctan-approx
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: any
+Maintainer: Bohdan Remyha bogdanremuga@gmail.com
+Description: A program to approximate arctangent values

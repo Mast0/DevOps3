@@ -268,7 +268,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /usr/local
+prefix = /
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -692,7 +692,8 @@ install-dvi: install-dvi-am
 install-dvi-am:
 
 install-exec-am: install-binPROGRAMS
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-html: install-html-am
 
 install-html-am:
@@ -735,7 +736,7 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
 
-.MAKE: install-am install-strip
+.MAKE: install-am install-exec-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles am--refresh check \
 	check-am clean clean-binPROGRAMS clean-cscope clean-generic \
@@ -746,16 +747,26 @@ uninstall-am: uninstall-binPROGRAMS
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-exec-am install-exec-hook install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
 	uninstall-am uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
+
+install-exec-hook:
+	mkdir -p $(DESTDIR)/deb/DEBIAN
+	echo "Package: arctan-approx" > $(DESTDIR)/deb/DEBIAN/control
+	echo "Version: 1.0" >> $(DESTDIR)/deb/DEBIAN/control
+	echo "Section: utils" >> $(DESTDIR)/deb/DEBIAN/control
+	echo "Priority: optional" >> $(DESTDIR)/deb/DEBIAN/control
+	echo "Architecture: any" >> $(DESTDIR)/deb/DEBIAN/control
+	echo "Maintainer: Bohdan Remyha bogdanremuga@gmail.com" >> $(DESTDIR)/deb/DEBIAN/control
+	echo "Description: A program to approximate arctangent values" >> $(DESTDIR)/deb/DEBIAN/control
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
