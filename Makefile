@@ -2,13 +2,14 @@ CC = g++
 CFLAGS = -Wall -g
 TARGET = arctan_approx
 
-all: $(TARGET)
+SOURCES = main.cpp arctan.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
 
-$(TARGET): main.o
-	$(CC) $(CFLAGS) -o $(TARGET) main.o
+$(TARGET): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS)
 
-main.o: main.cpp
-	$(CC) $(CFLAGS) -c main.cpp
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(TARGET)
+	rm -f $(TARGET) $(OBJECTS)
