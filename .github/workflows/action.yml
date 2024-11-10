@@ -1,12 +1,12 @@
-name: BuildingDebianPackage
+name: AutoTest
 
 on:
   push:
     branches:
-      - branchAutoPackage
+      - branchAutoTest
   pull_request:
     branches:
-      - branchAutoPackage
+      - branchAutoTest
 
 jobs:
   build:
@@ -14,9 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build deb package
+    - name: AutoTest
       run: |
-        autoreconf --install
-        ./configure --prefix=/
-        make install DESTDIR=$(pwd)
-        dpkg-deb --build deb
+        ./configure
+        make
+        make check

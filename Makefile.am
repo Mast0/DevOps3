@@ -1,6 +1,9 @@
 bin_PROGRAMS = arctan_approx
 arctan_approx_SOURCES = main.cpp arctan.cpp arctan.h
 
+check_PROGRAMS = arctan_test
+arctan_test_SOURCES = test.cpp arctan.cpp arctan.h
+
 install-exec-hook:
 	mkdir -p $(DESTDIR)/deb/DEBIAN
 	echo "Package: arctan-approx" > $(DESTDIR)/deb/DEBIAN/control
