@@ -3,10 +3,10 @@ name: BuildingTarball
 on:
   push:
     branches:
-      - branchAutomake
+      - branchAutoMake
   pull_request:
     branches:
-      - branchAutomake
+      - branchAutoMake
 
 jobs:
   build:
