@@ -32,5 +32,5 @@ jobs:
 
     - name: Run Docker container
       run: |
-        docker run -d --name my_running_server -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/my-http-server:latest
+        docker run -d --name http_servere -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/http_server_image:latest
         docker ps
