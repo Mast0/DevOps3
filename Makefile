@@ -87,7 +87,7 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = arctan_approx$(EXEEXT)
-check_PROGRAMS = arctan_test$(EXEEXT)
+check_PROGRAMS = test_server$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -105,9 +105,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am_arctan_approx_OBJECTS = main.$(OBJEXT) arctan.$(OBJEXT)
 arctan_approx_OBJECTS = $(am_arctan_approx_OBJECTS)
 arctan_approx_LDADD = $(LDADD)
-am_arctan_test_OBJECTS = test.$(OBJEXT) arctan.$(OBJEXT)
-arctan_test_OBJECTS = $(am_arctan_test_OBJECTS)
-arctan_test_LDADD = $(LDADD)
+am_test_server_OBJECTS = test_server-test_server.$(OBJEXT)
+test_server_OBJECTS = $(am_test_server_OBJECTS)
+test_server_DEPENDENCIES =
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -124,8 +124,12 @@ DEFAULT_INCLUDES = -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/arctan.Po ./$(DEPDIR)/main.Po \
-	./$(DEPDIR)/test.Po
+	./$(DEPDIR)/test_server-test_server.Po
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 AM_V_CXX = $(am__v_CXX_$(V))
@@ -151,8 +155,8 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(arctan_approx_SOURCES) $(arctan_test_SOURCES)
-DIST_SOURCES = $(arctan_approx_SOURCES) $(arctan_test_SOURCES)
+SOURCES = $(arctan_approx_SOURCES) $(test_server_SOURCES)
+DIST_SOURCES = $(arctan_approx_SOURCES) $(test_server_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -273,7 +277,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /
+prefix = /usr/local
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -287,6 +291,12 @@ top_builddir = .
 top_srcdir = .
 arctan_approx_SOURCES = main.cpp arctan.cpp arctan.h
 arctan_test_SOURCES = test.cpp arctan.cpp arctan.h
+test_server_SOURCES = test_server.cpp
+test_server_CPPFLAGS = -I/usr/include
+test_server_LDADD = -lcurl
+DOCKER_IMAGE = mast00/http_server_image
+DOCKER_TAG = latest
+DOCKER_REGISTRY = docker.io
 all: all-am
 
 .SUFFIXES:
@@ -374,9 +384,9 @@ arctan_approx$(EXEEXT): $(arctan_approx_OBJECTS) $(arctan_approx_DEPENDENCIES) $
 	@rm -f arctan_approx$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(arctan_approx_OBJECTS) $(arctan_approx_LDADD) $(LIBS)
 
-arctan_test$(EXEEXT): $(arctan_test_OBJECTS) $(arctan_test_DEPENDENCIES) $(EXTRA_arctan_test_DEPENDENCIES) 
-	@rm -f arctan_test$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(arctan_test_OBJECTS) $(arctan_test_LDADD) $(LIBS)
+test_server$(EXEEXT): $(test_server_OBJECTS) $(test_server_DEPENDENCIES) $(EXTRA_test_server_DEPENDENCIES) 
+	@rm -f test_server$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_server_OBJECTS) $(test_server_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -386,7 +396,7 @@ distclean-compile:
 
 include ./$(DEPDIR)/arctan.Po # am--include-marker
 include ./$(DEPDIR)/main.Po # am--include-marker
-include ./$(DEPDIR)/test.Po # am--include-marker
+include ./$(DEPDIR)/test_server-test_server.Po # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -407,6 +417,20 @@ am--depfiles: $(am__depfiles_remade)
 #	$(AM_V_CXX)source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+test_server-test_server.o: test_server.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_server_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_server-test_server.o -MD -MP -MF $(DEPDIR)/test_server-test_server.Tpo -c -o test_server-test_server.o `test -f 'test_server.cpp' || echo '$(srcdir)/'`test_server.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/test_server-test_server.Tpo $(DEPDIR)/test_server-test_server.Po
+#	$(AM_V_CXX)source='test_server.cpp' object='test_server-test_server.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_server_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_server-test_server.o `test -f 'test_server.cpp' || echo '$(srcdir)/'`test_server.cpp
+
+test_server-test_server.obj: test_server.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_server_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_server-test_server.obj -MD -MP -MF $(DEPDIR)/test_server-test_server.Tpo -c -o test_server-test_server.obj `if test -f 'test_server.cpp'; then $(CYGPATH_W) 'test_server.cpp'; else $(CYGPATH_W) '$(srcdir)/test_server.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/test_server-test_server.Tpo $(DEPDIR)/test_server-test_server.Po
+#	$(AM_V_CXX)source='test_server.cpp' object='test_server-test_server.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_server_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_server-test_server.obj `if test -f 'test_server.cpp'; then $(CYGPATH_W) 'test_server.cpp'; else $(CYGPATH_W) '$(srcdir)/test_server.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -685,7 +709,7 @@ distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f ./$(DEPDIR)/arctan.Po
 	-rm -f ./$(DEPDIR)/main.Po
-	-rm -f ./$(DEPDIR)/test.Po
+	-rm -f ./$(DEPDIR)/test_server-test_server.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -736,7 +760,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f ./$(DEPDIR)/arctan.Po
 	-rm -f ./$(DEPDIR)/main.Po
-	-rm -f ./$(DEPDIR)/test.Po
+	-rm -f ./$(DEPDIR)/test_server-test_server.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -785,6 +809,27 @@ install-exec-hook:
 	echo "Architecture: any" >> $(DESTDIR)/deb/DEBIAN/control
 	echo "Maintainer: Bohdan Remyha bogdanremuga@gmail.com" >> $(DESTDIR)/deb/DEBIAN/control
 	echo "Description: A program to approximate arctangent values" >> $(DESTDIR)/deb/DEBIAN/control
+
+dockerfile: Dockerfile
+
+Dockerfile: Makefile.am
+	echo 'FROM debian:bullseye-slim' > Dockerfile
+	echo 'RUN apt-get update && apt-get install -y g++ make' >> Dockerfile
+	echo 'COPY . /app' >> Dockerfile
+	echo 'WORKDIR /app' >> Dockerfile
+	echo 'RUN make' >> Dockerfile
+	echo 'RUN g++ -o http_server HTTP_Server.cpp arctan.cpp -lpthread' >> Dockerfile
+	echo 'EXPOSE 8081' >> Dockerfile
+	echo 'CMD ["./http_server"]' >> Dockerfile
+
+docker-push:
+	@echo "Building Docker image $(DOCKER_IMAGE):$(DOCKER_TAG)..."
+	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
+	@echo "Pushing Docker image to registry $(DOCKER_REGISTRY)..."
+	docker push $(DOCKER_IMAGE):$(DOCKER_TAG)
+	@echo "Docker image pushed successfully!"
+
+.PHONY: docker-push
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1,0 +1,22 @@
+name: Compile Tests
+
+on:
+  push:
+    branches:
+      - branchHTTPserver
+  pull_request:
+    branches:
+      - branchHTTPserver
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: TestsCompile
+      run: |
+        autoreconf -i
+        ./configure
+        make
+        make check

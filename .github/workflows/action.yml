@@ -1,12 +1,12 @@
-name: AutoTest
+name: Docker Compile and Push
 
 on:
   push:
     branches:
-      - branchAutoTest
+      - branchHTTPserver
   pull_request:
     branches:
-      - branchAutoTest
+      - branchHTTPserver
 
 jobs:
   build:
@@ -14,8 +14,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: AutoTest
+    - name: Set up dependencies
       run: |
+        sudo apt-get update
+        sudo apt-get install -y automake autoconf libtool g++ curl docker.io
+
+    - name: Build and configure project
+      run: |
+        autoreconf -i
         ./configure
         make
-        make check
+
+    - name: Log in to DockerHub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
+
+    - name: Build and push Docker image
+        run: make docker-push
+
+    - name: Run Docker container
+        run: |
+          docker run -d --name my_running_server -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/my-http-server:latest
+          docker ps
