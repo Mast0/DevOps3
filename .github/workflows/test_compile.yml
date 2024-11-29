@@ -16,7 +16,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: TestsCompile
       run: |
-        autoreconf -i
+        aclocal
+        autoconf
+        automake --add-missing
         ./configure
         make
         make check

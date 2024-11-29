@@ -26,15 +26,15 @@ jobs:
         make
 
     - name: Log in to DockerHub
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
 
     - name: Build and push Docker image
-        run: make docker-push
+      run: make docker-push
 
     - name: Run Docker container
-        run: |
-          docker run -d --name my_running_server -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/my-http-server:latest
-          docker ps
+      run: |
+        docker run -d --name my_running_server -p 8081:8081 ${{ secrets.DOCKER_USERNAME }}/my-http-server:latest
+        docker ps
