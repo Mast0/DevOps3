@@ -90,7 +90,7 @@ void handleGET(int clientSocket, const char* path) {
 
         std::vector<double> values;
         int terms = 100;
-        for (double x = 0.1; x <= 1000.0; x += 0.1) {
+        for (double x = 0.1; x <= 5000.0; x += 0.1) {
             values.push_back(arctan(x, terms));
         }
 

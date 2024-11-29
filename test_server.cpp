@@ -35,7 +35,7 @@ bool testComputeEndpoint() {
     // Validate the response
     try {
         int elapsedTime = std::stoi(response);
-        if (elapsedTime < 1000 || elapsedTime > 20000) {
+        if (elapsedTime < 5000 || elapsedTime > 20000) {
             std::cerr << "Elapsed time out of range: " << elapsedTime << "ms" << std::endl;
             return false;
         }
