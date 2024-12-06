@@ -27,11 +27,15 @@ dockerfile: Dockerfile
 
 Dockerfile: Makefile.am
 	echo 'FROM debian:bullseye-slim' > Dockerfile
-	echo 'RUN apt-get update && apt-get install -y g++ make' >> Dockerfile
-	echo 'COPY . /app' >> Dockerfile
+	echo 'RUN apt-get update && apt-get install -y g++ make git' >> Dockerfile
 	echo 'WORKDIR /app' >> Dockerfile
+	echo 'RUN git clone https://github.com/Mast0/DevOps3.git .' >> Dockerfile
 	echo 'RUN make' >> Dockerfile
 	echo 'RUN g++ -o http_server HTTP_Server.cpp arctan.cpp -lpthread' >> Dockerfile
+	echo 'FROM alpine:latest' >> Dockerfile
+	echo 'RUN apk add --no-cache libstdc++ libc6-compat' >> Dockerfile
+	echo 'WORKDIR /app' >> Dockerfile
+	echo 'COPY --from=build /app/http_server .' >> Dockerfile
 	echo 'EXPOSE 8081' >> Dockerfile
 	echo 'CMD ["./http_server"]' >> Dockerfile
 
