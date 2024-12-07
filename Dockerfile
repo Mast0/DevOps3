@@ -1,7 +1,9 @@
-FROM debian:bullseye-slim
-RUN apt-get update && apt-get install -y g++ make
+FROM debian:bullseye-slim AS build
+RUN apt-get update && apt-get install -y g++ make git autoconf
 WORKDIR /app
 RUN git clone https://github.com/Mast0/DevOps3.git .
+RUN git checkout branchHTTPserverMulti
+RUN autoreconf -i && ./configure
 RUN make
 RUN g++ -o http_server HTTP_Server.cpp arctan.cpp -lpthread
 

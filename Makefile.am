@@ -26,10 +26,12 @@ install-exec-hook:
 dockerfile: Dockerfile
 
 Dockerfile: Makefile.am
-	echo 'FROM debian:bullseye-slim' > Dockerfile
-	echo 'RUN apt-get update && apt-get install -y g++ make git' >> Dockerfile
+	echo 'FROM debian:bullseye-slim AS build' > Dockerfile
+	echo 'RUN apt-get update && apt-get install -y g++ make git autoconf' >> Dockerfile
 	echo 'WORKDIR /app' >> Dockerfile
 	echo 'RUN git clone https://github.com/Mast0/DevOps3.git .' >> Dockerfile
+	echo 'RUN git checkout branchHTTPserverMulti' >> Dockerfile
+	echo 'RUN autoreconf -i && ./configure'
 	echo 'RUN make' >> Dockerfile
 	echo 'RUN g++ -o http_server HTTP_Server.cpp arctan.cpp -lpthread' >> Dockerfile
 	echo 'FROM alpine:latest' >> Dockerfile
