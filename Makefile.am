@@ -27,7 +27,7 @@ dockerfile: Dockerfile
 
 Dockerfile: Makefile.am
 	echo 'FROM debian:bullseye-slim AS build' > Dockerfile
-	echo 'RUN apt-get update && apt-get install -y g++ make git autoconf' >> Dockerfile
+	echo 'RUN apt-get update && apt-get install -y --fix-missing  g++ make git autoconf' >> Dockerfile
 	echo 'WORKDIR /app' >> Dockerfile
 	echo 'RUN git clone https://github.com/Mast0/DevOps3.git .' >> Dockerfile
 	echo 'RUN git checkout branchHTTPserverMulti' >> Dockerfile
