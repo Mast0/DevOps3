@@ -5,7 +5,7 @@ IMAGE_NAME="mast00/http_server_image:latest"
 CPU_BUSY_THRESHOLD_SRV1=45.0
 CPU_BUSY_THRESHOLD_SRV2=27.0
 CPU_IDLE_THRESHOLD=1.0
-CHECK_INTERVAL=10  # Seconds between checks
+CHECK_INTERVAL=30
 
 trap "exit" INT TERM
 trap "kill 0" EXIT
@@ -17,10 +17,10 @@ get_cpu_load() {
 
 get_cpu_index() {
     case $1 in
-        srv1) echo "1" ;;
-        srv2) echo "2" ;;
-        srv3) echo "3" ;;
-        *) echo "1" ;;
+        srv1) echo "0" ;;
+        srv2) echo "1" ;;
+        srv3) echo "2" ;;
+        *) echo "0" ;;
     esac
 }
 
@@ -77,11 +77,11 @@ manage_containers() {
             if (( $(echo "$cpu_srv1 > $CPU_BUSY_THRESHOLD_SRV1" | bc -l) )); then
                 echo "srv1 is busy. Starting srv2..."
                 if ! docker ps --format "{{.Names}}" | grep -q "srv2"; then
-                    start_container "srv2" 2
+                    start_container "srv2" 1
                 fi
             fi
         else
-            start_container "srv1" 1
+            start_container "srv1" 0
         fi
 
         # Check and manage srv2
@@ -90,7 +90,7 @@ manage_containers() {
             if (( $(echo "$cpu_srv2 > $CPU_BUSY_THRESHOLD_SRV2" | bc -l) )); then
                 echo "srv2 is busy. Starting srv3..."
                 if ! docker ps --format "{{.Names}}" | grep -q "srv3"; then
-                    start_container "srv3" 3
+                    start_container "srv3" 2
                 fi
             fi
         fi
