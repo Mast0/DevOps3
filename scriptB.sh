@@ -3,7 +3,7 @@
 # Variables
 SERVER_URL="http://127.0.0.1/compute"   # Replace with the actual server URL or IP
 REQUEST_INTERVAL_MIN=5          # Minimum time between requests (seconds)
-REQUEST_INTERVAL_MAX=10         # Maximum time between requests (seconds)
+REQUEST_INTERVAL_MAX=6         # Maximum time between requests (seconds)
 
 # Function to send HTTP requests asynchronously
 send_requests() {

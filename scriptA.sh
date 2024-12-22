@@ -5,7 +5,7 @@ IMAGE_NAME="mast00/http_server_image:latest"
 CPU_BUSY_THRESHOLD_SRV1=45.0
 CPU_BUSY_THRESHOLD_SRV2=27.0
 CPU_IDLE_THRESHOLD=1.0
-CHECK_INTERVAL=120  # Seconds between checks
+CHECK_INTERVAL=10  # Seconds between checks
 
 trap "exit" INT TERM
 trap "kill 0" EXIT
@@ -30,14 +30,11 @@ start_container() {
 
     if docker ps --format "{{.Names}}" | grep -q "^$container_name$"; then
         echo "Container $container_name already exists. Removing it..."
-        docker rm -f "$container_name" > /dev/null
+        docker rm -f "$container_name"
     fi
 
     echo "Starting container $container_name on CPU core #$cpu_core..."
-    if ! docker run --name "$container_name" --cpuset-cpus="$cpu_core" "$IMAGE_NAME" > /dev/null; then
-        echo "Failed to start container $container_name"
-        return 1
-    fi
+    docker run --name "$container_name" --cpuset-cpus="$cpu_core" --network bridge -d "$IMAGE_NAME";
 }
 
 update_containers() {
@@ -49,8 +46,8 @@ update_containers() {
             if docker ps --format "{{.Names}}" | grep -q "^$container$"; then
                 new_container="${container}_new"
                 start_container "$new_container" "$(get_cpu_index "$container")"
-                docker kill "$container" > /dev/null
-                docker rm "$container" > /dev/null
+                docker kill "$container"
+                docker rm "$container"
                 docker rename "$new_container" "$container"
                 echo "$container has been updated."
             fi
@@ -62,6 +59,18 @@ update_containers() {
 
 manage_containers() {
     while true; do
+        # Check idle containers and terminate
+        for container in srv3 srv2; do
+            if docker ps --format "{{.Names}}" | grep -q "$container"; then
+                cpu=$(get_cpu_load "$container")
+                if (( $(echo "$cpu < $CPU_IDLE_THRESHOLD" | bc -l) )); then
+                    echo "$container is idle -----> terminating..."
+                    docker kill "$container"
+                    docker rm "$container"
+                fi
+            fi
+        done
+
         # Check and manage srv1
         if docker ps --format "{{.Names}}" | grep -q "srv1"; then
             cpu_srv1=$(get_cpu_load "srv1")
@@ -85,18 +94,6 @@ manage_containers() {
                 fi
             fi
         fi
-
-        # Check idle containers and terminate
-        for container in srv3 srv2; do
-            if docker ps --format "{{.Names}}" | grep -q "$container"; then
-                cpu=$(get_cpu_load "$container")
-                if (( $(echo "$cpu < $CPU_IDLE_THRESHOLD" | bc -l) )); then
-                    echo "$container is idle -----> terminating..."
-                    docker kill "$container" > /dev/null
-                    docker rm "$container" > /dev/null
-                fi
-            fi
-        done
 
         # Check for image updates
         update_containers
